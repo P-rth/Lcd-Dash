@@ -10,7 +10,7 @@ The double bars are rendered using Progressbardouble library.
 
 Currently only working in Linux.
 
-![Defalt Screen](%5Benter%20image%20description%20here%5D%28https://github.com/P-rth/Lcd-Dash/blob/main/Image.jpg?raw=true%29)
+![Defalt Screen](https://github.com/P-rth/Lcd-Dash/blob/main/Image.jpg?raw=true%29)
 
 [Click here to see working](https://www.reddit.com/r/arduino/comments/18ctvnx/look_what_i_made_lcd_info_panel_for_pc_16x2/)
 
