@@ -10,3 +10,21 @@ The double bars are rendered using Progressbardouble library.
 
 Currently only working in Linux.
 
+    Curcuit :
+    
+    A7 --> 5.6k ohms --> Groud
+    Reset --> 22uf capacitor --> switch -- Groud  (turn off to upload code)
+    
+    LDR (+) --> Vin / 5v
+    LDR (-) --> A7
+    
+    Backlight + (LCD A) --> D10
+    Backlight - (LCD K) --> Groud
+    
+    
+    LCD RS --> 12
+    LCD Enable --> 11
+    LCD D4 --> 5
+    LCD D5 --> 4
+    LCD D6 --> 3
+    LCD D7 --> 2
