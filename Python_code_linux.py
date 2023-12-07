@@ -11,6 +11,29 @@ import dbus
 import time
 import threading
 
+# Constants
+points = 20           # No of points for smoothing of readings (brightness,cpu)
+cpu_points = 100
+
+# Serial initialization
+ser = serial.Serial(
+    port='/dev/ttyUSB0',        #change port to desired port
+    baudrate=2000000)
+
+# Application alias dictionary
+app_alias = {
+    'plasmashell': 'Desktop',
+    'Thorium-browser': 'Thorium',
+    'kscreenlocker': 'Lockscreen',                   
+    'ksmserver-logout-greeter': 'Power-menu',
+}
+
+bright_funct = True  # Enable or Disable brightess change
+
+Bright_change_cmd = 'ddcutil --sleep-multiplier .05 --noverify --bus 1 setvcp 10'     # Change this according to your OS
+
+min_bright = 20      #Min brightness
+
 
 
 class ScrollingText:
@@ -53,7 +76,6 @@ class ScrollingText:
                 self.out = self.text[i:i + self.limit]
 
 
-
 def get_currently_playing():
     try:
         session_bus = dbus.SessionBus()
@@ -85,23 +107,8 @@ scrl_txt_obj.start_scrolling()
 scrl_txt_obj.update_text("This is example scroll text")
 
 
-
-
-# Constants
-points = 20
-
-# Serial initialization
-ser = serial.Serial(port='/dev/ttyUSB0', baudrate=2000000)
-
 display = Xlib.display.Display()
 
-# Application alias dictionary
-app_alias = {
-    'plasmashell': 'Desktop',
-    'Thorium-browser': 'Thorium',
-    'kscreenlocker': 'Lockscreen',
-    'ksmserver-logout-greeter': 'Power-menu',
-}
 
 # Get active window
 def get_active_window():
@@ -150,10 +157,10 @@ def change_brightness():
     while True:
         if avg_que:
             val = int(np.mean(avg_que))
-            val = int(20+((val/100)*80))                     #change display brightness b/w 30 to 70
+            val = int(min_bright+((val/100)*(100-min_bright)))                     #change display brightness b/w 20 to 80
             if val_old != val:
                 #print(val)
-                os.system(f"ddcutil --sleep-multiplier .05 --noverify --bus 1 setvcp 10 {val}")
+                os.system(f"{Bright_change_cmd} {val}")
                 val_old = val
             else:
                 time.sleep(0.2)
@@ -161,7 +168,8 @@ def change_brightness():
 avg_que = queue.deque(maxlen=points)
 
 t1 = threading.Thread(target=change_brightness, daemon=True)
-t1.start()  
+if bright_funct == True:
+    t1.start()  
 
 # Read brightness
 def read_brightness(timeout):
@@ -177,7 +185,7 @@ def read_brightness(timeout):
 # Initial CPU usage measurement
 psutil.cpu_percent(interval=None)
 
-cpu_avg = queue.deque(maxlen=100)
+cpu_avg = queue.deque(maxlen=cpu_points)
 
 def write_data(cls=False):
     while True:
