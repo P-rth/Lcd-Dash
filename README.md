@@ -8,7 +8,10 @@ The measured brightness is sent to pc to adjust monitor's brightness and olso th
 It's using serial over usb for communicating with the pc. 
 The double bars are rendered using Progressbardouble library. 
 
+**[Custom library required]** ---> https://github.com/P-rth/LcdProgressBarDouble
+
 Currently only working in Linux.
+will only take minor changes to port to windows
 
 ![Defalt Screen](https://github.com/P-rth/Lcd-Dash/blob/main/Image.jpg?raw=true%29)
 
@@ -34,3 +37,5 @@ Currently only working in Linux.
     LCD D5 --> 4
     LCD D6 --> 3
     LCD D7 --> 2
+
+Please star if you found this usefull :)
