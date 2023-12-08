@@ -130,7 +130,7 @@ byte d_pg_char[8] = {
 //================================================================
 void setup() {
     Serial.begin(2000000);
-    Serial.println("Eter data in format: <time[8],app[8],day[0-100],cpu[0-100],mem[0-100]>");           //start serial
+    Serial.println("Enter data in format: <time[8],app[8],day[0-100],cpu[0-100],mem[0-100]>");           //start serial
     
     
     lcd.begin(2,16);
