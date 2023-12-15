@@ -68,12 +68,13 @@ class ScrollingText:
         range_len = text_length - self.limit + 1
 
         while self.running:
-            
             for i in range(range_len):
                 time.sleep(self.speed)
                 if not self.running:
                     break
                 self.out = self.text[i:i + self.limit]
+
+
 
 
 def get_currently_playing():
@@ -118,7 +119,7 @@ def get_active_window():
         if wmclass is None:
             window = window.query_tree().parent
             wmclass = window.get_wm_class()
-
+        
         return wmclass[1] if wmclass and len(wmclass) > 1 else wmclass
     except Exception as error:
         print("An error occurred:", error)
@@ -151,36 +152,52 @@ def parse_app(app):
         return app
     return ""
 
-# Change brightness
-def change_brightness():
-    val_old = 0
-    while True:
-        if avg_que:
-            val = int(np.mean(avg_que))
-            val = int(min_bright+((val/100)*(100-min_bright)))                     #change display brightness b/w 20 to 80
-            if val_old != val:
-                #print(val)
-                os.system(f"{Bright_change_cmd} {val}")
-                val_old = val
-            else:
-                time.sleep(0.2)
+bright_change_steps = 5
 
-avg_que = queue.deque(maxlen=points)
-
-t1 = threading.Thread(target=change_brightness, daemon=True)
-if bright_funct == True:
-    t1.start()  
+def map_bright(bright):
+    return int(min_bright+((bright/100)*(100-min_bright)))                     #change display brightness b/w 20 to 80
+    
+num = 0
 
 # Read brightness
 def read_brightness(timeout):
+
+    ser.flushOutput()
+    global num
     try:
         line = ser.readline(timeout)
         if line:
             string = line.decode()
             num = int(string)
-            avg_que.append(num)
     except Exception as error:
         print(error)
+
+def change_brightness():
+    global num
+    val_old = 0
+    while True:
+        if num:
+            val = num
+            if val_old != val:
+                val1 = map_bright(val)
+                
+                if val_old>val:
+                    list1 = list(range(val1, val_old + 1))[::-1] 
+                else:
+                    list1 = list(range(val_old, val1 + 1))
+
+                print(list1)
+                for i in list1:
+                    print(i,val_old,val1)
+                    os.system(f"{Bright_change_cmd} {i}")
+                    time.sleep(0.05)
+
+                val_old = val1
+
+
+t1 = threading.Thread(target=change_brightness, daemon=True)
+if bright_funct == True:
+    t1.start()  
 
 # Initial CPU usage measurement
 psutil.cpu_percent(interval=None)
@@ -210,6 +227,8 @@ def write_data(cls=False):
             read_brightness(timeout=None)
         except Exception as error:
             print("An error occurred:", error)
+
+        time.sleep(0.5)
 
         if cls == True:
             break
